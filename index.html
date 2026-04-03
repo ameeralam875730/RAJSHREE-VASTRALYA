@@ -1,1 +1,894 @@
-Hello Bro Hi I Am Anuj 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>RAJSHREE VASTRALYA | Premium Billing System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+        "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"
+      }
+    }
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    .login-page {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #8B1E3F 0%, #4A0E2A 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+    }
+    
+    .bg-animation .circle {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+      animation: float 20s infinite linear;
+    }
+    
+    .circle-1 { width: 300px; height: 300px; top: -100px; left: -100px; animation-duration: 25s; }
+    .circle-2 { width: 500px; height: 500px; bottom: -200px; right: -200px; animation-duration: 30s; }
+    .circle-3 { width: 200px; height: 200px; top: 50%; left: 50%; animation-duration: 18s; }
+    
+    @keyframes float {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(50px, 30px) rotate(180deg); }
+      100% { transform: translate(0, 0) rotate(360deg); }
+    }
+    
+    .login-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 450px;
+    }
+    
+    .brand {
+      text-align: center;
+      margin-bottom: 30px;
+      animation: fadeInDown 0.8s ease;
+    }
+    
+    .brand h1 {
+      font-size: 32px;
+      color: white;
+      letter-spacing: 1px;
+      text-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+      font-family: 'Playfair Display', serif;
+    }
+    
+    .brand h1 i { margin-right: 10px; color: #F4B942; }
+    .brand p { color: rgba(255, 255, 255, 0.9); font-size: 12px; margin-top: 8px; }
+    
+    .card {
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      overflow: hidden;
+      animation: fadeInUp 0.8s ease;
+    }
+    
+    .card-header {
+      background: linear-gradient(135deg, #1E0A12 0%, #3A1828 100%);
+      padding: 30px;
+      text-align: center;
+    }
+    
+    .card-header h2 { color: #F4B942; font-size: 24px; font-weight: 600; }
+    .card-header p { color: rgba(255, 255, 255, 0.7); font-size: 14px; margin-top: 8px; }
+    .card-body { padding: 35px; }
+    
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748b; margin-bottom: 8px; letter-spacing: 0.5px; }
+    
+    .input-wrapper { position: relative; }
+    .input-wrapper i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 16px; }
+    .input-wrapper input { 
+      width: 100%; 
+      padding: 14px 16px 14px 48px; 
+      border: 2px solid #e2e8f0; 
+      border-radius: 16px; 
+      font-family: 'Poppins', sans-serif; 
+      font-size: 14px; 
+      transition: all 0.3s ease; 
+    }
+    .input-wrapper input:focus { outline: none; border-color: #F4B942; box-shadow: 0 0 0 3px rgba(244, 185, 66, 0.2); }
+    .input-wrapper input:disabled {
+      background: #f1f5f9;
+      color: #1e293b;
+      cursor: not-allowed;
+    }
+    
+    .btn { width: 100%; padding: 14px; border: none; border-radius: 16px; font-weight: 700; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s ease; }
+    .btn-primary { background: linear-gradient(135deg, #8B1E3F 0%, #4A0E2A 100%); color: #F4B942; border: 1px solid rgba(244, 185, 66, 0.3); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); }
+    .btn-primary:disabled { opacity: 0.7; transform: none; cursor: not-allowed; }
+    
+    .switch-link { text-align: center; margin-top: 20px; font-size: 14px; color: #64748b; }
+    .switch-link a { color: #F4B942; text-decoration: none; font-weight: 600; cursor: pointer; }
+    .switch-link a:hover { text-decoration: underline; }
+    
+    .form-container { display: none; }
+    .form-container.active { display: block; animation: fadeIn 0.5s ease; }
+    
+    .social-contact {
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid #e2e8f0;
+    }
+    
+    .social-title {
+      text-align: center;
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 15px;
+      font-weight: 500;
+    }
+    
+    .social-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    
+    .social-card {
+      background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+      border-radius: 14px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid #e2e8f0;
+      text-decoration: none;
+    }
+    
+    .social-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+    }
+    
+    .social-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      transition: all 0.3s ease;
+    }
+    
+    .social-card:hover .social-icon { transform: scale(1.1); }
+    .social-info { flex: 1; }
+    .social-info .platform { font-size: 12px; font-weight: 700; color: #1e293b; }
+    .social-info .handle { font-size: 10px; color: #64748b; margin-top: 2px; }
+    
+    .social-card.whatsapp .social-icon { background: #25d36620; color: #25d366; }
+    .social-card.instagram .social-icon { background: #e4405f20; color: #e4405f; }
+    .social-card.facebook .social-icon { background: #1877f220; color: #1877f2; }
+    .social-card.gmail .social-icon { background: #ea433520; color: #ea4335; }
+    
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    
+    .access-message {
+      text-align: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #fef9e6, #fff7e0);
+      border-radius: 16px;
+      margin-bottom: 20px;
+      border: 1px solid #F4B942;
+    }
+    
+    .access-message i { font-size: 40px; color: #F4B942; margin-bottom: 10px; }
+    .access-message h3 { color: #8B1E3F; font-size: 18px; margin-bottom: 8px; }
+    .access-message p { color: #64748b; font-size: 13px; }
+    
+    .bill-system {
+      display: none;
+      background: linear-gradient(135deg, #FDFBF7 0%, #F5F0E8 100%);
+      font-family: 'Poppins', sans-serif;
+      padding: 15px;
+      min-height: 100vh;
+    }
+    
+    .user-menu {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      z-index: 1000;
+    }
+    
+    .avatar-btn {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #F4B942, #D48D1A);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+      border: 2px solid white;
+    }
+    
+    .avatar-btn:hover { transform: scale(1.05); }
+    .avatar-btn span { font-size: 18px; font-weight: bold; color: #4A0E2A; }
+    
+    .dropdown-menu {
+      position: absolute;
+      top: 52px;
+      right: 0;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      width: 240px;
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+    }
+    
+    .dropdown-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
+    
+    .dropdown-header {
+      padding: 14px 18px;
+      background: linear-gradient(135deg, #1E0A12, #3A1828);
+      color: #F4B942;
+      border-bottom: 1px solid rgba(244, 185, 66, 0.3);
+    }
+    
+    .dropdown-header .user-email { font-size: 13px; font-weight: 500; color: white; }
+    .dropdown-header .user-name { font-size: 11px; color: #F4B942; margin-top: 4px; }
+    
+    .dropdown-item {
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      color: #1e293b;
+      font-weight: 500;
+    }
+    
+    .dropdown-item:hover { background: #f1f5f9; }
+    .dropdown-item i { width: 20px; color: #F4B942; font-size: 16px; }
+    .dropdown-item.logout { color: #dc2626; border-top: 1px solid #e2e8f0; }
+    .dropdown-item.logout i { color: #dc2626; }
+    
+    .loading-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9);
+      display: none; justify-content: center; align-items: center; z-index: 9999; flex-direction: column;
+    }
+    .loading-spinner { width: 60px; height: 60px; border: 5px solid #f3f3f3; border-top: 5px solid #F4B942; border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .loading-text { color: white; margin-top: 20px; font-size: 18px; font-weight: 600; }
+    
+    .toast-msg {
+      position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #25d366;
+      color: white; padding: 12px 24px; border-radius: 50px; font-weight: 600; z-index: 1000;
+      display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
+    .scroll-top { position: fixed; bottom: 30px; right: 20px; background: #8B1E3F; color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; transition: all 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 999; }
+    
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 28px;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+      overflow: hidden;
+    }
+    
+    #bill-content {
+      padding: 25px 25px 20px 25px;
+      background: white;
+      width: 100%;
+    }
+    
+    .bill-header {
+      text-align: center;
+      background: linear-gradient(135deg, #1E0A12 0%, #4A0E2A 50%, #2D0F1C 100%);
+      margin: -25px -25px 25px -25px;
+      padding: 30px 25px 25px 25px;
+      color: white;
+      border-radius: 0 0 35px 35px;
+      border-bottom: 2px solid #F4B942;
+    }
+    .bill-header h1 { font-size: 38px; font-family: 'Playfair Display', serif; color: #F4B942; margin-bottom: 8px; letter-spacing: 1px; }
+    .brand-tagline { font-size: 14px; opacity: 0.9; letter-spacing: 1px; margin-bottom: 15px; font-weight: 500; }
+    .brand-showcase { 
+      display: flex; 
+      justify-content: center; 
+      gap: 12px; 
+      flex-wrap: wrap; 
+      margin: 15px 0 12px; 
+    }
+    .brand-item { 
+      background: rgba(255,255,255,0.12); 
+      padding: 6px 14px; 
+      border-radius: 40px; 
+      font-size: 11px; 
+      font-weight: 600; 
+      color: #fff; 
+      border: 1px solid rgba(244, 185, 66, 0.4); 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 6px; 
+    }
+    .brand-item i { color: #F4B942; font-size: 11px; }
+    .khadi-line {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 500;
+      color: #F4B942;
+      background: rgba(244, 185, 66, 0.15);
+      display: inline-block;
+      padding: 6px 20px;
+      border-radius: 40px;
+      margin-top: 8px;
+      letter-spacing: 0.5px;
+    }
+    .contact-details { font-size: 11px; margin-top: 12px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+    .contact-details span i { margin-right: 4px; color: #F4B942; }
+    .gst-row { margin-top: 10px; font-size: 10px; background: rgba(244,185,66,0.2); color: #F4B942; display: inline-block; padding: 4px 15px; border-radius: 40px; font-weight: 800; }
+    
+    .info-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      background: #f8fafc;
+      padding: 18px 20px;
+      border-radius: 20px;
+      margin-bottom: 18px;
+      border: 1px solid #e2e8f0;
+    }
+    .info-row div label { font-size: 10px; font-weight: 700; color: #475569; margin-bottom: 5px; text-transform: uppercase; }
+    .info-row input { width: 100%; padding: 10px 12px; border: 1.5px solid #e2e8f0; border-radius: 14px; font-size: 13px; }
+    
+    .controls-section { margin-bottom: 18px; }
+    .controls { display: flex; gap: 10px; flex-wrap: wrap; }
+    .controls input { flex: 1; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 18px; font-size: 13px; }
+    .gst-toggle-row { display: flex; align-items: center; gap: 15px; margin-top: 8px; padding: 8px 0; flex-wrap: wrap; }
+    .gst-checkbox-label { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: #4A0E2A; cursor: pointer; }
+    .gst-checkbox-label input { width: 18px; height: 18px; cursor: pointer; accent-color: #F4B942; }
+    .gst-percent-input { display: flex; align-items: center; gap: 8px; background: #f1f5f9; padding: 6px 12px; border-radius: 40px; }
+    .gst-percent-input label { font-size: 12px; font-weight: 600; color: #475569; }
+    .gst-percent-input input { width: 70px; padding: 6px 8px; border: 1px solid #e2e8f0; border-radius: 20px; font-size: 12px; text-align: center; }
+    #addBtn { background: linear-gradient(135deg, #8B1E3F, #4A0E2A); color: white; border: none; padding: 12px 28px; border-radius: 40px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    
+    .items-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    .items-table th { background: #4A0E2A; color: #F4B942; padding: 12px 10px; text-align: left; font-size: 12px; }
+    .items-table td { padding: 10px 10px; border-bottom: 1px solid #edf2f7; font-size: 13px; }
+    
+    .delete-items-section {
+      margin-top: 15px;
+      padding: 12px;
+      background: #fef9e6;
+      border-radius: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 15px;
+      justify-content: space-between;
+    }
+    .delete-label { font-size: 12px; font-weight: 600; color: #8B1E3F; }
+    .delete-select { padding: 8px 12px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 13px; min-width: 200px; }
+    .delete-item-btn { background: #dc2626; color: white; border: none; padding: 8px 20px; border-radius: 40px; cursor: pointer; font-weight: 600; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; }
+    .delete-item-btn:hover { background: #b91c1c; }
+    
+    .qr-section { margin-top: 18px; text-align: center; padding: 18px; background: #fef9e6; border-radius: 24px; border: 1px solid #F4B942; display: none; }
+    .qr-section canvas { margin: 10px auto; display: block; }
+    .action-area { padding: 20px 25px 25px; background: #fefefe; border-top: 2px solid #f1f5f9; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .btn-action { border: none; padding: 12px 24px; border-radius: 50px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; color: white; font-size: 13px; }
+    #printBtn { background: linear-gradient(135deg, #2c3e50, #1a2632); }
+    #whatsappBtn { background: linear-gradient(135deg, #25d366, #128C7E); }
+    #savePdfBtn { background: linear-gradient(135deg, #D48D1A, #B57A1A); }
+    #qrBtn { background: linear-gradient(135deg, #2e7d32, #1b5e20); }
+    
+    .pdf-mode .controls-section, .pdf-mode .action-area, .pdf-mode .scroll-top, .pdf-mode .delete-items-section { display: none !important; }
+    
+    @media print { 
+      .controls-section, .action-area, .delete-items-section, #qrBtn, #whatsappBtn, #savePdfBtn, .scroll-top, .user-menu { display: none !important; } 
+      body { padding: 0; margin: 0; background: white; } 
+      #bill-content { padding: 0.3in; }
+    }
+    @media (max-width: 680px) {
+      .bill-header h1 { font-size: 28px; }
+      .btn-action { padding: 10px 16px; font-size: 11px; }
+      .info-row { grid-template-columns: 1fr; }
+      #bill-content { padding: 15px; }
+      .bill-header { margin: -15px -15px 15px -15px; padding: 25px 15px 20px 15px; }
+      .container { border-radius: 20px; }
+      .controls { flex-direction: column; }
+      .delete-items-section { flex-direction: column; align-items: stretch; }
+      .delete-select { width: 100%; }
+      .brand-showcase { gap: 8px; }
+      .brand-item { padding: 4px 10px; font-size: 9px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Login Page -->
+<div id="loginPage" class="login-page">
+  <div class="bg-animation">
+    <div class="circle circle-1"></div>
+    <div class="circle circle-2"></div>
+    <div class="circle circle-3"></div>
+  </div>
+  <div class="login-container">
+    <div class="brand">
+      <h1><i class="fas fa-store"></i> RAJSHREE VASTRALYA</h1>
+      <p>✦ Premium Branded Fabrics ✦</p>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h2><i class="fas fa-lock"></i> Welcome Back</h2>
+        <p>Sign in to manage your bills</p>
+      </div>
+      <div class="card-body">
+        <div id="loginContainer" class="form-container active">
+          <div class="form-group">
+            <label><i class="fas fa-envelope"></i> EMAIL ADDRESS</label>
+            <div class="input-wrapper">
+              <i class="fas fa-envelope"></i>
+              <input type="email" id="loginEmail" value="rajshree@gmail.com" disabled readonly>
+            </div>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-lock"></i> PASSWORD</label>
+            <div class="input-wrapper">
+              <i class="fas fa-lock"></i>
+              <input type="password" id="loginPassword" placeholder="Enter your password">
+            </div>
+          </div>
+          <button class="btn btn-primary" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Login</button>
+          <div class="switch-link">Don't have an account? <a id="showRegister">Contact Admin</a></div>
+        </div>
+        
+        <div id="registerContainer" class="form-container">
+          <div class="access-message">
+            <i class="fas fa-headset"></i>
+            <h3>Contact Admin for Access</h3>
+            <p>Please reach out to the administrator to get your login credentials</p>
+          </div>
+          <div class="social-contact">
+            <div class="social-title"><i class="fas fa-phone-alt"></i> Connect with Admin</div>
+            <div class="social-grid">
+              <a href="https://wa.me/917209076462?text=Hi%20Admin%2C%20I%20need%20access%20to%20Rajshree%20Vastralya%20System" target="_blank" class="social-card whatsapp">
+                <div class="social-icon"><i class="fab fa-whatsapp"></i></div>
+                <div class="social-info"><div class="platform">Official WhatsApp</div><div class="handle">+91 7209076462</div></div>
+              </a>
+              <a href="https://www.instagram.com/ameer_bhai04?igsh=MTJpOWVkc2lsZ2Eybg==" target="_blank" class="social-card instagram">
+                <div class="social-icon"><i class="fab fa-instagram"></i></div>
+                <div class="social-info"><div class="platform">Official Instagram</div><div class="handle">@ameer_bhai04</div></div>
+              </a>
+              <a href="https://www.facebook.com/share/1EAqmF3RrR/" target="_blank" class="social-card facebook">
+                <div class="social-icon"><i class="fab fa-facebook-f"></i></div>
+                <div class="social-info"><div class="platform">Official Facebook</div><div class="handle">Rajshree Vastralya</div></div>
+              </a>
+              <a href="mailto:ameeralam875730@gmail.com?subject=Rajshree%20Vastralya%20Access&body=Hi%20Admin%2C%20I%20need%20access." target="_blank" class="social-card gmail">
+                <div class="social-icon"><i class="fas fa-envelope"></i></div>
+                <div class="social-info"><div class="platform">Official Gmail</div><div class="handle">ameeralam875730</div></div>
+              </a>
+            </div>
+          </div>
+          <div class="switch-link">Already have an account? <a id="showLogin">Login</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bill System -->
+<div id="billSystem" class="bill-system">
+  <div class="user-menu">
+    <div class="avatar-btn" id="avatarBtn"><span id="avatarInitial">U</span></div>
+    <div class="dropdown-menu" id="dropdownMenu">
+      <div class="dropdown-header"><div class="user-email" id="dropdownEmail">user@example.com</div><div class="user-name">Rajshree Vastralya</div></div>
+      <div class="dropdown-item logout" id="logoutDropdownBtn"><i class="fas fa-sign-out-alt"></i><span>Logout</span></div>
+    </div>
+  </div>
+
+  <div class="loading-overlay" id="loadingOverlay"><div class="loading-spinner"></div><div class="loading-text">Generating PDF Bill... 📄</div></div>
+  <div class="toast-msg" id="toastMsg">✅ PDF Saved Successfully!</div>
+
+  <div class="container" id="mainContainer">
+    <div id="bill-content">
+      <!-- Header Section -->
+      <div class="bill-header">
+        <h1>RAJSHREE VASTRALYA</h1>
+        <div class="brand-tagline">✦ Premium Branded Fabrics ✦</div>
+        <div class="brand-showcase">
+          <div class="brand-item"><i class="fas fa-female"></i> SIYARAM'S</div>
+          <div class="brand-item"><i class="fas fa-tshirt"></i> RAYMOND</div>
+          <div class="brand-item"><i class="fas fa-shopping-bag"></i> VIMAL</div>
+          <div class="brand-item"><i class="fas fa-scarf"></i> PAVILION</div>
+          <div class="brand-item"><i class="fas fa-male"></i> MONTORO</div>
+        </div>
+        <div class="khadi-line">✨ शुद्ध खादी की पुरी रेन्ज उपलब्ध है । ✨</div>
+        <div class="contact-details">
+          <span><i class="fas fa-phone-alt"></i> 6204619072</span>
+          <span><i class="fas fa-map-marker-alt"></i> Taraiya, Near Temple West</span>
+        </div>
+        <div class="gst-row">GSTIN : 10BZJPS2040HIZP</div>
+      </div>
+
+      <!-- Bill Info Row -->
+      <div class="info-row">
+        <div><label><i class="fas fa-receipt"></i> BILL NO.</label><input type="text" id="billNo" readonly style="background:#f1f5f9; font-weight:600;"></div>
+        <div><label><i class="fas fa-user"></i> CUSTOMER NAME</label><input type="text" id="custName" placeholder="Enter customer name"></div>
+        <div><label><i class="fas fa-calendar-alt"></i> DATE</label><input type="text" id="dateInput" readonly style="background:#f1f5f9;"></div>
+        <div><label><i class="fab fa-whatsapp"></i> WHATSAPP NO.</label><input type="tel" id="custMobile" placeholder="Enter WhatsApp number"></div>
+      </div>
+
+      <!-- Items Section -->
+      <div class="controls-section">
+        <div class="controls">
+          <input type="text" id="itemName" placeholder="👗 Item / Product Name">
+          <input type="number" id="itemQty" placeholder="Qty" value="1">
+          <input type="number" id="itemPrice" placeholder="₹ Price">
+          <button id="addBtn"><i class="fas fa-plus-circle"></i> Add Item</button>
+        </div>
+        <div class="gst-toggle-row">
+          <label class="gst-checkbox-label">
+            <input type="checkbox" id="applyGstCheckbox"> <i class="fas fa-percent"></i> Apply GST on this item
+          </label>
+          <div class="gst-percent-input">
+            <label>GST %:</label>
+            <input type="number" id="gstPercent" value="12" step="0.5" min="0" max="100" placeholder="%">
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <table class="items-table" id="billTable">
+        <thead>
+          <tr><th>Item Description</th><th>Qty</th><th>Rate (₹)</th><th>GST %</th><th>GST Amt (₹)</th><th>Amount (₹)</th> </thead>
+        <tbody id="tableBody">
+          <tr><td colspan="6" style="text-align:center; color:#888; padding:30px;">No items added. Click "Add Item" to add products. </td> </tr>
+        </tbody>
+        <tfoot>
+          <tr style="background: #fef9e6; font-weight: 700;">
+            <td colspan="4" align="right"><strong>SUBTOTAL</strong>  </td><td id="subtotal" style="font-weight: 800; color: #8B1E3F;">₹0.00</td><td style="border:none;"></td>
+           </tr>
+          <tr style="background: #fef9e6; font-weight: 700;">
+            <td colspan="4" align="right"><strong>TOTAL GST</strong>     </td><td id="gstTotal" style="font-weight: 800; color: #D48D1A;">₹0.00</td><td style="border:none;"></td>
+           </tr>
+          <tr style="background: #f1e5d0; font-weight: 800;">
+            <td colspan="4" align="right"><strong>GRAND TOTAL</strong>     </td><td id="grandTotal" style="font-size: 18px; font-weight: 800; color: #8B1E3F;">₹0.00</td><td style="border:none;"></td>
+           </tr>
+        </tfoot>
+      </table>
+
+      <!-- Delete section -->
+      <div class="delete-items-section">
+        <span class="delete-label"><i class="fas fa-trash-alt"></i> Remove Item:</span>
+        <select id="deleteItemSelect" class="delete-select">
+          <option value="-1">-- Select Item to Delete --</option>
+        </select>
+        <button id="deleteSelectedBtn" class="delete-item-btn"><i class="fas fa-trash"></i> Delete Selected</button>
+      </div>
+
+      <div id="qrArea" class="qr-section">
+        <p><i class="fas fa-qrcode"></i> Scan & Pay via UPI</p>
+        <div id="qrcode"></div>
+        <p style="font-size:11px; margin-top:10px;">UPI: 6204619072@ybl</p>
+        <p style="font-size:12px; font-weight:bold; margin-top:5px;">Amount: ₹<span id="qrAmount">0.00</span></p>
+      </div>
+    </div>
+
+    <div class="action-area">
+      <button id="qrBtn" class="btn-action"><i class="fas fa-qrcode"></i> Payment QR</button>
+      <button id="savePdfBtn" class="btn-action"><i class="fas fa-save"></i> 💾 Save PDF Bill</button>
+      <button id="whatsappBtn" class="btn-action"><i class="fab fa-whatsapp"></i> 📱 Send on WhatsApp</button>
+      <button id="printBtn" class="btn-action" onclick="window.print()"><i class="fas fa-print"></i> Print Bill</button>
+    </div>
+  </div>
+  <div class="scroll-top" id="scrollTopBtn"><i class="fas fa-arrow-up"></i></div>
+</div>
+
+<script type="module">
+  const firebaseConfig = {
+    apiKey: "AIzaSyB5PMe0R7QYyNXiH-SPMFW4gXaN7c37JWw",
+    authDomain: "prajapaticyclebill.firebaseapp.com",
+    projectId: "prajapaticyclebill",
+    storageBucket: "prajapaticyclebill.firebasestorage.app",
+    messagingSenderId: "338038578938",
+    appId: "1:338038578938:web:af5451e069b69e80037343"
+  };
+
+  import { initializeApp } from "firebase/app";
+  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const loginPage = document.getElementById('loginPage');
+  const billSystem = document.getElementById('billSystem');
+  const loginBtn = document.getElementById('loginBtn');
+  const showRegisterLink = document.getElementById('showRegister');
+  const showLoginLink = document.getElementById('showLogin');
+  const loginContainer = document.getElementById('loginContainer');
+  const registerContainer = document.getElementById('registerContainer');
+  const avatarBtn = document.getElementById('avatarBtn');
+  const dropdownMenu = document.getElementById('dropdownMenu');
+  const logoutDropdownBtn = document.getElementById('logoutDropdownBtn');
+  const avatarInitial = document.getElementById('avatarInitial');
+  const dropdownEmail = document.getElementById('dropdownEmail');
+  const toastMsg = document.getElementById('toastMsg');
+
+  function showToast(message, isError = false) {
+    toastMsg.textContent = message;
+    toastMsg.style.background = isError ? '#dc2626' : '#10b981';
+    toastMsg.style.display = 'block';
+    setTimeout(() => toastMsg.style.display = 'none', 3000);
+  }
+
+  avatarBtn.addEventListener('click', (e) => { e.stopPropagation(); dropdownMenu.classList.toggle('show'); });
+  document.addEventListener('click', (e) => { if (!avatarBtn.contains(e.target) && !dropdownMenu.contains(e.target)) dropdownMenu.classList.remove('show'); });
+
+  showRegisterLink.addEventListener('click', (e) => { e.preventDefault(); loginContainer.classList.remove('active'); registerContainer.classList.add('active'); });
+  showLoginLink.addEventListener('click', (e) => { e.preventDefault(); registerContainer.classList.remove('active'); loginContainer.classList.add('active'); });
+
+  loginBtn.addEventListener('click', async () => {
+    const email = "rajshree@gmail.com";
+    const password = document.getElementById('loginPassword').value;
+    if (!password) { showToast('Please enter password', true); return; }
+    loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging...';
+    loginBtn.disabled = true;
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      showToast('✅ Login successful!');
+    } catch (error) {
+      let errorMsg = 'Login failed! ';
+      if (error.code === 'auth/user-not-found') errorMsg += 'User not found.';
+      else if (error.code === 'auth/wrong-password') errorMsg += 'Wrong password.';
+      else errorMsg += error.message;
+      showToast(errorMsg, true);
+    } finally {
+      loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+      loginBtn.disabled = false;
+    }
+  });
+
+  const handleLogout = async () => { try { await signOut(auth); dropdownMenu.classList.remove('show'); showToast('✅ Logged out!'); } catch (error) { showToast('Logout failed!', true); } };
+  logoutDropdownBtn.addEventListener('click', handleLogout);
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      loginPage.style.display = 'none';
+      billSystem.style.display = 'block';
+      avatarInitial.textContent = user.email.charAt(0).toUpperCase();
+      dropdownEmail.textContent = user.email;
+      initializeBillSystem();
+    } else {
+      loginPage.style.display = 'flex';
+      billSystem.style.display = 'none';
+    }
+  });
+
+  document.getElementById('loginPassword')?.addEventListener('keypress', (e) => { if (e.key === 'Enter') loginBtn.click(); });
+
+  let billCounter = localStorage.getItem('rajshreeBillCounter');
+  if (!billCounter) { billCounter = 1; localStorage.setItem('rajshreeBillCounter', billCounter); }
+  function generateBillNumber() { return `RSV-${String(billCounter).padStart(4, '0')}`; }
+  function updateBillNumber() { document.getElementById('billNo').value = generateBillNumber(); }
+  function incrementBillCounter() { billCounter++; localStorage.setItem('rajshreeBillCounter', billCounter); updateBillNumber(); }
+
+  document.getElementById('dateInput').value = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+  
+  let items = [];
+
+  function updateDeleteSelect() {
+    const select = document.getElementById('deleteItemSelect');
+    select.innerHTML = '<option value="-1">-- Select Item to Delete --</option>';
+    items.forEach((item, idx) => {
+      select.innerHTML += `<option value="${idx}">${item.name} (Qty: ${item.qty}, ₹${item.price})</option>`;
+    });
+  }
+
+  function getGrandTotalValue() {
+    let subtotal = 0, totalGst = 0;
+    items.forEach((item) => {
+      const amount = item.qty * item.price;
+      if(item.applyGst && item.gstPercent > 0) {
+        totalGst += amount * (item.gstPercent / 100);
+      }
+      subtotal += amount;
+    });
+    return subtotal + totalGst;
+  }
+
+  function generateQRCode() {
+    const grandTotal = getGrandTotalValue();
+    const upiString = `upi://pay?pa=6204619072@ybl&pn=RAJSHREE VASTRALYA&am=${grandTotal.toFixed(2)}&cu=INR`;
+    const qrDiv = document.getElementById('qrcode');
+    qrDiv.innerHTML = '';
+    new QRCode(qrDiv, {
+      text: upiString,
+      width: 180,
+      height: 180,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+    document.getElementById('qrAmount').innerText = grandTotal.toFixed(2);
+  }
+
+  function renderTable(){
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = '';
+    let subtotal = 0, totalGst = 0;
+    
+    if(items.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#888; padding:30px;">No items added. Click "Add Item" to add products.</td></tr>';
+    } else {
+      items.forEach((item) => {
+        const amount = item.qty * item.price;
+        let gstAmount = 0;
+        let gstPercentDisplay = 'No GST';
+        if(item.applyGst && item.gstPercent > 0) {
+          gstAmount = amount * (item.gstPercent / 100);
+          gstPercentDisplay = item.gstPercent + '%';
+        }
+        const finalAmount = amount + gstAmount;
+        subtotal += amount;
+        totalGst += gstAmount;
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td style="font-weight:500;">${escapeHtml(item.name)}</td>
+          <td>${item.qty}</td>
+          <td>₹${item.price.toFixed(2)}</td>
+          <td>${gstPercentDisplay}</td>
+          <td>₹${gstAmount.toFixed(2)}</td>
+          <td style="font-weight:600;">₹${finalAmount.toFixed(2)}</td>`;
+        tbody.appendChild(row);
+      });
+    }
+    
+    document.getElementById('subtotal').innerHTML = `₹${subtotal.toFixed(2)}`;
+    document.getElementById('gstTotal').innerHTML = `₹${totalGst.toFixed(2)}`;
+    document.getElementById('grandTotal').innerHTML = `₹${(subtotal + totalGst).toFixed(2)}`;
+    updateDeleteSelect();
+  }
+
+  document.getElementById('deleteSelectedBtn').onclick = () => {
+    const select = document.getElementById('deleteItemSelect');
+    const idx = parseInt(select.value);
+    if(idx === -1 || isNaN(idx)) { 
+      alert("Koi item select karo!"); 
+      return; 
+    }
+    items.splice(idx, 1);
+    renderTable();
+    showToast('✅ Item deleted successfully!');
+    select.value = "-1";
+  };
+
+  document.getElementById('addBtn').onclick = ()=>{
+    const name = document.getElementById('itemName').value.trim();
+    const qty = parseFloat(document.getElementById('itemQty').value);
+    const price = parseFloat(document.getElementById('itemPrice').value);
+    const applyGst = document.getElementById('applyGstCheckbox').checked;
+    let gstPercent = parseFloat(document.getElementById('gstPercent').value);
+    if(isNaN(gstPercent)) gstPercent = 0;
+    if(!name){ alert("Item name daalein!"); return; }
+    if(isNaN(qty)||qty<=0){ alert("Sahi quantity daalein!"); return; }
+    if(isNaN(price)||price<=0){ alert("Sahi price daalein!"); return; }
+    items.push({name, qty, price, applyGst, gstPercent: applyGst ? gstPercent : 0});
+    renderTable();
+    document.getElementById('itemName').value = '';
+    document.getElementById('itemQty').value = '1';
+    document.getElementById('itemPrice').value = '';
+    document.getElementById('applyGstCheckbox').checked = false;
+    document.getElementById('gstPercent').value = '12';
+  };
+
+  function escapeHtml(str){ return str.replace(/[&<>]/g, m=> m==='&'?'&amp;':m==='<'?'&lt;':'&gt;'); }
+
+  document.getElementById('qrBtn').onclick = ()=>{
+    const grandTotal = getGrandTotalValue();
+    if(grandTotal <= 0){ showToast('Bill amount zero hai! Item add karo.', true); return; }
+    generateQRCode();
+    document.getElementById('qrArea').style.display = 'block';
+    showToast(`✅ QR Code generated for ₹${grandTotal.toFixed(2)}`);
+  };
+
+  async function generateAndSavePDF(){
+    if(items.length===0){ alert("Bill mein koi item nahi hai!"); return false; }
+    const loader = document.getElementById('loadingOverlay');
+    loader.style.display = 'flex';
+    document.getElementById('mainContainer').classList.add('pdf-mode');
+    try{
+      const billContent = document.getElementById('bill-content');
+      const qrArea = document.getElementById('qrArea');
+      let qrDisplay = qrArea.style.display;
+      qrArea.style.display = 'none';
+      const canvas = await html2canvas(billContent, { scale: 2, useCORS: true });
+      qrArea.style.display = qrDisplay;
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('p','mm','a4');
+      const pageWidth = 210;
+      const margin = 10;
+      const usableWidth = pageWidth - margin*2;
+      const imgHeight = (canvas.height * usableWidth) / canvas.width;
+      const imgData = canvas.toDataURL('image/jpeg', 1.0);
+      pdf.addImage(imgData, 'JPEG', margin, margin, usableWidth, imgHeight);
+      incrementBillCounter();
+      pdf.save(`Bill_${document.getElementById('billNo').value}_${document.getElementById('custName').value || 'Customer'}.pdf`);
+      showToast('✅ PDF Bill saved!');
+      return true;
+    } catch(e){
+      console.error(e);
+      showToast('❌ Error generating PDF!', true);
+      return false;
+    } finally{
+      document.getElementById('mainContainer').classList.remove('pdf-mode');
+      loader.style.display='none';
+    }
+  }
+
+  document.getElementById('savePdfBtn').onclick = async ()=> await generateAndSavePDF();
+
+  document.getElementById('whatsappBtn').onclick = ()=>{
+    const mobile = document.getElementById('custMobile').value.trim();
+    const name = document.getElementById('custName').value.trim() || "Customer";
+    const billNo = document.getElementById('billNo').value;
+    const subtotal = document.getElementById('subtotal').innerText;
+    const gstTotal = document.getElementById('gstTotal').innerText;
+    const grandTotal = document.getElementById('grandTotal').innerText;
+    if(!mobile){ alert("WhatsApp number daalein!"); return; }
+    if(items.length===0){ alert("Bill mein koi item nahi hai!"); return; }
+    let cleanMobile = mobile.replace(/\s/g,'');
+    if(cleanMobile.startsWith('0')) cleanMobile = '91'+cleanMobile.substring(1);
+    if(!cleanMobile.startsWith('91') && cleanMobile.length===10) cleanMobile='91'+cleanMobile;
+    let msg = `🧥 *RAJSHREE VASTRALYA* 👗\n━━━━━━━━━━━━━━━━━━━━━━\n📄 *Bill No:* ${billNo}\n📅 *Date:* ${document.getElementById('dateInput').value}\n👤 *Customer:* ${name}\n━━━━━━━━━━━━━━━━━━━━━━\n*🛍️ ITEMS DETAILS:*\n`;
+    items.forEach((it,i)=>{ const amt = it.qty*it.price; const gstAmt = it.applyGst ? amt*(it.gstPercent/100) : 0; msg += `${i+1}. ${it.name}\n   ➜ Qty: ${it.qty} × ₹${it.price} = ₹${amt.toFixed(2)} ${it.applyGst ? `(GST ${it.gstPercent}%: ₹${gstAmt.toFixed(2)})` : ''}\n`; });
+    msg += `━━━━━━━━━━━━━━━━━━━━━━\n💰 *Subtotal:* ${subtotal}\n📊 *Total GST:* ${gstTotal}\n💵 *GRAND TOTAL:* ${grandTotal}\n━━━━━━━━━━━━━━━━━━━━━━\n✅ *Payment:* Cash / UPI\n📞 *Support:* 6204619072\n📍 Taraiya, Near Temple West\n🙏 *Dhanyavaad! Aapka Swagat Hai.`;
+    window.open(`https://wa.me/${cleanMobile}?text=${encodeURIComponent(msg)}`, '_blank');
+    setTimeout(()=>showToast('📱 WhatsApp open!'),1000);
+  };
+
+  const scrollBtn = document.getElementById('scrollTopBtn');
+  window.addEventListener('scroll',()=>{ scrollBtn.style.opacity = window.scrollY>300?'1':'0'; });
+  scrollBtn.onclick = ()=>window.scrollTo({top:0,behavior:'smooth'});
+
+  function initializeBillSystem() {
+    updateBillNumber();
+    renderTable();
+  }
+</script>
+</body>
+</html>
